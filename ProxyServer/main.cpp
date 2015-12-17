@@ -7,9 +7,18 @@
 //
 
 #include <iostream>
+#include <memory>
+
+#include "ProxyServer.hpp"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    if (argc != 3) {
+        cout << "Try: " << " ./main [host] [port]" << endl;
+        return 0;
+    }
+    string host = argv[1];
+    int port = atoi(argv[2]);
+    auto server = unique_ptr<ProxyServer>(new ProxyServer(host, port));
+    server->start();
     return 0;
 }

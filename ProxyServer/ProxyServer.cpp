@@ -38,19 +38,22 @@ void ProxyServer::start() {
     debug("entering main loop...");
     while (true) {
         ret = kevent(kfd, nullptr, 0, eventList, MAX_EVENT_NUM, nullptr);
-        debug("getting an event.");
         /// no timeout so if less than 0 then there is error.
         if (ret <= 0) printErrorAndExit("error occurred when waiting.");
         /// handles event one by one.
         for (int eventIndex = 0; eventIndex < ret; ++eventIndex) {
             KEVENT *pCurrentEvent = &eventList[eventIndex];
             if (pCurrentEvent->ident == listenEvent.ident) {
-                acceptClient((int)listenEvent.ident, pCurrentEvent);
+                int cfd = acceptClient((int)listenEvent.ident, pCurrentEvent);
+                registerEventsForNewClient(kfd, cfd);
+            }
+            else if (pCurrentEvent->flags & EV_EOF) {
+                debug("connection closed with peer: " + clientsMap[(int)pCurrentEvent->ident]);
+                clearClientData(kfd, (int)pCurrentEvent->ident);
             }
             else if (pCurrentEvent->filter == EVFILT_READ) {
             }
             else if (pCurrentEvent->filter == EVFILT_WRITE) {
-                debug("event write " + clientsMap[(int)pCurrentEvent->ident]);
             }
         }
     }
@@ -64,23 +67,48 @@ void ProxyServer::initListenEvent(KEVENT *ev) {
     sin.sin_family = AF_INET;
     sin.sin_port = htons(port);
     sin.sin_addr.s_addr = inet_addr(host.c_str());
+    
     int ret = bind(fd, (struct sockaddr *)&sin, sizeof(sin));
     if (ret < 0) printErrorAndExit("bind failed.");
-    /// according to documentation, the backlog is silently limited
-    /// to 128.
+    
     ret = listen(fd, 80);
-    debug("listening on " + host + ":" + std::to_string(port));
     if (ret < 0) printErrorAndExit("listen failed.");
+    debug("listening on " + host + ":" + std::to_string(port));
+
     EV_SET(ev, fd, EVFILT_READ, EV_ADD, 0, 80, nullptr);
 }
 
-void ProxyServer::acceptClient(int listenFd, const KEVENT *ev) {
-    debug("accepting connection");
-    static struct sockaddr addr;
-    static socklen_t socklen;
+int ProxyServer::acceptClient(int listenFd, const KEVENT *ev) {
+    struct sockaddr addr;
+    socklen_t socklen;
     int fd = accept(listenFd, &addr, &socklen);
     if (fd < 0) printErrorAndExit("error when accepting connection.");
     struct sockaddr_in *inAddr = (struct sockaddr_in *)&addr;
     std::string clientHost = inet_ntoa(inAddr->sin_addr);
-    clientsMap[fd] = getServerKey(clientHost, inAddr->sin_port);
+    unsigned short clientPort = ntohs(inAddr->sin_port);
+    clientsMap[fd] = getServerKey(clientHost, clientPort);
+    debug("added client: " + clientsMap[fd]);
+    return fd;
+}
+
+void ProxyServer::registerEventsForNewClient(int kfd, int cfd) {
+    static KEVENT tmpEvent;
+    
+    /// register read and write events
+    memset(&tmpEvent, 0, sizeof(tmpEvent));
+    EV_SET(&tmpEvent, cfd, EVFILT_READ, EV_ADD, 0, 0, nullptr);
+    int ret = kevent(kfd, &tmpEvent, 1, nullptr, 0, nullptr);
+    if (ret < 0) printErrorAndExit("set event for read failed.");
+    
+    memset(&tmpEvent, 0, sizeof(tmpEvent));
+    EV_SET(&tmpEvent, cfd, EVFILT_WRITE, EV_ADD, 0, 0, nullptr);
+    ret = kevent(kfd, &tmpEvent, 1, nullptr, 0, nullptr);
+    if (ret < 0) printErrorAndExit("set event for write failed.");
+}
+
+void ProxyServer::clearClientData(int kfd, int cfd) {
+    clientsMap.erase(cfd);
+    /// close will trigger EV_DELETE on the events
+    /// related to the fd.
+    if (cfd >= 0) close(cfd);
 }

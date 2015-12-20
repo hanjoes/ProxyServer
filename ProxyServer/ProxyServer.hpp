@@ -31,7 +31,9 @@ public:
     
 protected:
     void initListenEvent(KEVENT *ev);
-    void acceptClient(int listenFd, const KEVENT *ev);
+    int acceptClient(int listenFd, const KEVENT *ev);
+    void registerEventsForNewClient(int kfd, int cfd);
+    void clearClientData(int kfd, int cfd);
     
 protected:
     KEVENT *eventList;

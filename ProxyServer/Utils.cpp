@@ -19,6 +19,6 @@ void debug(const std::string &msg) {
 #endif
 }
 
-std::string getServerKey(const std::string &host, short port) {
+std::string getServerKey(const std::string &host, unsigned short port) {
     return host + ":" + std::to_string(port);
 }

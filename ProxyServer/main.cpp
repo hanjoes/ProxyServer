@@ -13,12 +13,12 @@
 
 int main(int argc, const char * argv[]) {
     if (argc != 3) {
-        cout << "Try: " << " ./main [host] [port]" << endl;
+        std::cout << "Try: " << " ./main [host] [port]" << std::endl;
         return 0;
     }
-    string host = argv[1];
+    std::string host = argv[1];
     int port = atoi(argv[2]);
-    auto server = unique_ptr<ProxyServer>(new ProxyServer(host, port));
+    auto server = std::unique_ptr<ProxyServer>(new ProxyServer(host, port));
     server->start();
     return 0;
 }

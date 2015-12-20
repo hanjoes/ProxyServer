@@ -11,18 +11,32 @@
 
 #include <cstdio>
 #include <string>
+#include <unordered_map>
 
-using namespace std;
+#include <sys/types.h>
+#include <sys/event.h>
+#include <sys/time.h>
+
+using KEVENT = struct kevent;
+
+const static int MAX_EVENT_NUM = 128;
 
 class ProxyServer {
-
 public:
-    ProxyServer(const string &host, int port);
+    ProxyServer(const std::string &host, int port);
+    
+    ~ProxyServer();
     
     void start();
     
-private:
-    const string &host;
+protected:
+    void initListenEvent(KEVENT *ev);
+    void acceptClient(int listenFd, const KEVENT *ev);
+    
+protected:
+    KEVENT *eventList;
+    std::unordered_map<int, std::string> clientsMap;
+    const std::string &host;
     int port;
 };
 

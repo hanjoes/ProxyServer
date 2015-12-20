@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		DB86016E1C223DB900AADBA3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB86016D1C223DB900AADBA3 /* main.cpp */; };
+		DB8601781C223EFD00AADBA3 /* ClientHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB8601741C223EFD00AADBA3 /* ClientHandler.cpp */; };
+		DB86017C1C223F5300AADBA3 /* ProxyServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB8601761C223EFD00AADBA3 /* ProxyServer.cpp */; };
+		DBD5ED741C264931008D1057 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBD5ED721C264931008D1057 /* Utils.cpp */; settings = {COMPILER_FLAGS = "-D DEBUG"; }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +28,12 @@
 /* Begin PBXFileReference section */
 		DB86016A1C223DB900AADBA3 /* ProxyServer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ProxyServer; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB86016D1C223DB900AADBA3 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		DB8601741C223EFD00AADBA3 /* ClientHandler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ClientHandler.cpp; sourceTree = "<group>"; };
+		DB8601751C223EFD00AADBA3 /* ClientHandler.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ClientHandler.hpp; sourceTree = "<group>"; };
+		DB8601761C223EFD00AADBA3 /* ProxyServer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyServer.cpp; sourceTree = "<group>"; };
+		DB8601771C223EFD00AADBA3 /* ProxyServer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ProxyServer.hpp; sourceTree = "<group>"; };
+		DBD5ED721C264931008D1057 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
+		DBD5ED731C264931008D1057 /* Utils.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Utils.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +66,13 @@
 		DB86016C1C223DB900AADBA3 /* ProxyServer */ = {
 			isa = PBXGroup;
 			children = (
+				DB8601741C223EFD00AADBA3 /* ClientHandler.cpp */,
+				DB8601751C223EFD00AADBA3 /* ClientHandler.hpp */,
+				DB8601761C223EFD00AADBA3 /* ProxyServer.cpp */,
+				DB8601771C223EFD00AADBA3 /* ProxyServer.hpp */,
 				DB86016D1C223DB900AADBA3 /* main.cpp */,
+				DBD5ED721C264931008D1057 /* Utils.cpp */,
+				DBD5ED731C264931008D1057 /* Utils.hpp */,
 			);
 			path = ProxyServer;
 			sourceTree = "<group>";
@@ -118,7 +133,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB86017C1C223F5300AADBA3 /* ProxyServer.cpp in Sources */,
+				DB8601781C223EFD00AADBA3 /* ClientHandler.cpp in Sources */,
 				DB86016E1C223DB900AADBA3 /* main.cpp in Sources */,
+				DBD5ED741C264931008D1057 /* Utils.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,6 +255,7 @@
 				DB8601731C223DB900AADBA3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

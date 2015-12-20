@@ -38,6 +38,7 @@ void ProxyServer::start() {
     debug("entering main loop...");
     while (true) {
         ret = kevent(kfd, nullptr, 0, eventList, MAX_EVENT_NUM, nullptr);
+        debug("getting an event.");
         /// no timeout so if less than 0 then there is error.
         if (ret <= 0) printErrorAndExit("error occurred when waiting.");
         /// handles event one by one.
@@ -61,21 +62,20 @@ void ProxyServer::initListenEvent(KEVENT *ev) {
     struct sockaddr_in sin;
     sin.sin_len = sizeof(struct sockaddr_in);
     sin.sin_family = AF_INET;
-    sin.sin_port = port;
-    inet_pton(AF_INET, host.c_str(), &sin.sin_addr);
-    
-    int ret = bind(fd, (const struct sockaddr *)&sin, sin.sin_len);
+    sin.sin_port = htons(port);
+    sin.sin_addr.s_addr = inet_addr(host.c_str());
+    int ret = bind(fd, (struct sockaddr *)&sin, sizeof(sin));
     if (ret < 0) printErrorAndExit("bind failed.");
     /// according to documentation, the backlog is silently limited
     /// to 128.
-    int backlog = 128;
-    ret = listen(fd, backlog);
+    ret = listen(fd, 80);
+    debug("listening on " + host + ":" + std::to_string(port));
     if (ret < 0) printErrorAndExit("listen failed.");
-    
-    EV_SET(ev, fd, EVFILT_READ, EV_ADD, 0, backlog, nullptr);
+    EV_SET(ev, fd, EVFILT_READ, EV_ADD, 0, 80, nullptr);
 }
 
 void ProxyServer::acceptClient(int listenFd, const KEVENT *ev) {
+    debug("accepting connection");
     static struct sockaddr addr;
     static socklen_t socklen;
     int fd = accept(listenFd, &addr, &socklen);

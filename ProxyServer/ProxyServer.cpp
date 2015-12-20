@@ -89,7 +89,6 @@ int ProxyServer::acceptClient(int listenFd) {
     unsigned short clientPort = ntohs(inAddr->sin_port);
     clientsMap[fd] = UPTRCH(new ClientHandler(clientHost, clientPort));
     debug("added client: " + clientHost + ":" + std::to_string(clientPort));
-    std::cout << clientsMap[fd]->dump() << std::endl;
     return fd;
 }
 

@@ -12,12 +12,16 @@
 #include <cstdio>
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
 
+#include "ClientHandler.hpp"
+
 using KEVENT = struct kevent;
+using UPTRCH = std::unique_ptr<ClientHandler>;
 
 const static int MAX_EVENT_NUM = 128;
 
@@ -31,13 +35,13 @@ public:
     
 protected:
     void initListenEvent(KEVENT *ev);
-    int acceptClient(int listenFd, const KEVENT *ev);
+    int acceptClient(int listenFd);
     void registerEventsForNewClient(int kfd, int cfd);
     void clearClientData(int kfd, int cfd);
     
 protected:
     KEVENT *eventList;
-    std::unordered_map<int, std::string> clientsMap;
+    std::unordered_map<int, UPTRCH> clientsMap;
     const std::string &host;
     int port;
 };

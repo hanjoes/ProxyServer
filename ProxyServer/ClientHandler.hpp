@@ -11,16 +11,19 @@
 
 #include <cstdio>
 #include <string>
-
-using namespace std;
+#include <iostream>
 
 class ClientHandler {
 public:
-    ClientHandler(const string &host, int port);
-
+    ClientHandler(const std::string &host, unsigned short port);
+    
+    ~ClientHandler();
+    
+    std::string dump();
+    
 private:
-    const string& host;
-    int port;
+    std::string host;
+    unsigned short port;
 };
 
 #endif /* ClientHandler_hpp */

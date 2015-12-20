@@ -43,13 +43,14 @@ void ProxyServer::start() {
         /// handles event one by one.
         for (int eventIndex = 0; eventIndex < ret; ++eventIndex) {
             KEVENT *pCurrentEvent = &eventList[eventIndex];
+            int eventIdent = (int)pCurrentEvent->ident;
+            
             if (pCurrentEvent->ident == listenEvent.ident) {
-                int cfd = acceptClient((int)listenEvent.ident, pCurrentEvent);
+                int cfd = acceptClient((int)listenEvent.ident);
                 registerEventsForNewClient(kfd, cfd);
             }
             else if (pCurrentEvent->flags & EV_EOF) {
-                debug("connection closed with peer: " + clientsMap[(int)pCurrentEvent->ident]);
-                clearClientData(kfd, (int)pCurrentEvent->ident);
+                clearClientData(kfd, eventIdent);
             }
             else if (pCurrentEvent->filter == EVFILT_READ) {
             }
@@ -78,7 +79,7 @@ void ProxyServer::initListenEvent(KEVENT *ev) {
     EV_SET(ev, fd, EVFILT_READ, EV_ADD, 0, 80, nullptr);
 }
 
-int ProxyServer::acceptClient(int listenFd, const KEVENT *ev) {
+int ProxyServer::acceptClient(int listenFd) {
     struct sockaddr addr;
     socklen_t socklen;
     int fd = accept(listenFd, &addr, &socklen);
@@ -86,8 +87,9 @@ int ProxyServer::acceptClient(int listenFd, const KEVENT *ev) {
     struct sockaddr_in *inAddr = (struct sockaddr_in *)&addr;
     std::string clientHost = inet_ntoa(inAddr->sin_addr);
     unsigned short clientPort = ntohs(inAddr->sin_port);
-    clientsMap[fd] = getServerKey(clientHost, clientPort);
-    debug("added client: " + clientsMap[fd]);
+    clientsMap[fd] = UPTRCH(new ClientHandler(clientHost, clientPort));
+    debug("added client: " + clientHost + ":" + std::to_string(clientPort));
+    std::cout << clientsMap[fd]->dump() << std::endl;
     return fd;
 }
 
@@ -107,6 +109,7 @@ void ProxyServer::registerEventsForNewClient(int kfd, int cfd) {
 }
 
 void ProxyServer::clearClientData(int kfd, int cfd) {
+    debug("clearing client: " + clientsMap[cfd]->dump());
     clientsMap.erase(cfd);
     /// close will trigger EV_DELETE on the events
     /// related to the fd.

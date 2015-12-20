@@ -8,7 +8,16 @@
 
 #include "ClientHandler.hpp"
 
-ClientHandler::ClientHandler(const string &host, int port)
+ClientHandler::ClientHandler(const std::string &host, unsigned short port)
 : host(host), port(port)
 {
 }
+
+ClientHandler::~ClientHandler() {
+    std::cout << "destructor called..." << std::endl;
+}
+
+std::string ClientHandler::dump() {
+    return host + ":" + std::to_string(port);
+}
+

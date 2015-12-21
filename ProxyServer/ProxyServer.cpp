@@ -35,7 +35,7 @@ void ProxyServer::start() {
     int ret = kevent(kfd, &listenEvent, 1, nullptr, 0, nullptr);
     if (ret < 0) printErrorAndExit("add event failed.");
     
-    debug("entering main loop...");
+    debug(">> entering main loop...");
     while (true) {
         ret = kevent(kfd, nullptr, 0, eventList, MAX_EVENT_NUM, nullptr);
         /// no timeout so if less than 0 then there is error.
@@ -53,6 +53,11 @@ void ProxyServer::start() {
                 clearClientData(kfd, eventIdent);
             }
             else if (pCurrentEvent->filter == EVFILT_READ) {
+                auto iter = clientsMap.find(eventIdent);
+                if (iter != clientsMap.end()) {
+                    auto &client = iter->second;
+                    client->processRequest(eventIdent, pCurrentEvent->data);
+                }
             }
             else if (pCurrentEvent->filter == EVFILT_WRITE) {
             }
@@ -74,7 +79,7 @@ void ProxyServer::initListenEvent(KEVENT *ev) {
     
     ret = listen(fd, 80);
     if (ret < 0) printErrorAndExit("listen failed.");
-    debug("listening on " + host + ":" + std::to_string(port));
+    debug(">> listening on " + host + ":" + std::to_string(port));
 
     EV_SET(ev, fd, EVFILT_READ, EV_ADD, 0, 80, nullptr);
 }
@@ -88,7 +93,7 @@ int ProxyServer::acceptClient(int listenFd) {
     std::string clientHost = inet_ntoa(inAddr->sin_addr);
     unsigned short clientPort = ntohs(inAddr->sin_port);
     clientsMap[fd] = UPTRCH(new ClientHandler(clientHost, clientPort));
-    debug("added client: " + clientHost + ":" + std::to_string(clientPort));
+    debug(">> added client: " + clientHost + ":" + std::to_string(clientPort));
     return fd;
 }
 
@@ -108,7 +113,7 @@ void ProxyServer::registerEventsForNewClient(int kfd, int cfd) {
 }
 
 void ProxyServer::clearClientData(int kfd, int cfd) {
-    debug("clearing client: " + clientsMap[cfd]->dump());
+    debug(">> clearing client: " + clientsMap[cfd]->dump());
     clientsMap.erase(cfd);
     /// close will trigger EV_DELETE on the events
     /// related to the fd.

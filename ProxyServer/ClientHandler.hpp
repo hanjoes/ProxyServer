@@ -13,6 +13,10 @@
 #include <string>
 #include <iostream>
 
+#include "Utils.hpp"
+
+const static int MAX_BUFFER_LEN = 4*1024;
+
 class ClientHandler {
 public:
     ClientHandler(const std::string &host, unsigned short port);
@@ -21,9 +25,19 @@ public:
     
     std::string dump();
     
+    void processRequest(int fd, size_t dataLen);
+
+private:
+    MSS generateHeaderMap(int fd);
+
 private:
     std::string host;
     unsigned short port;
+    
+    MSS headerMap;
+
+    int dataLen;
+    char buffer[MAX_BUFFER_LEN];
 };
 
 #endif /* ClientHandler_hpp */

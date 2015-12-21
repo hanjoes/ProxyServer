@@ -11,9 +11,16 @@
 
 #include <iostream>
 #include <string>
+#include <map>
+
+using MSS = std::map<std::string, std::string>;
+using PSS = std::pair<std::string, std::string>;
 
 void printErrorAndExit(const std::string &msg);
 void debug(const std::string &msg);
 std::string getServerKey(const std::string &host, unsigned short port);
+int parseHttpRequest(const char *buffer, MSS &headerMap);
+PSS splitByColon(const std::string &s);
+std::string trim(const std::string &s);
 
 #endif /* Utils_hpp */

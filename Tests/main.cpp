@@ -36,15 +36,24 @@ TEST(Utils, GetLines) {
     
     int consumed = getLines(input1.c_str(), (int)input1.size(), lines);
     EXPECT_EQ(line1.size(), consumed);
-    EXPECT_EQ("User-Agent: Wget/1.17 (darwin15.0.0)", lines.front());
-    EXPECT_EQ("User-Agent: Wget/1.17 (darwin15.0.0)", lines.back());
+    EXPECT_STREQ("User-Agent: Wget/1.17 (darwin15.0.0)", lines.front().c_str());
+    EXPECT_STREQ("User-Agent: Wget/1.17 (darwin15.0.0)", lines.back().c_str());
+    lines.clear();
     
     const std::string input2 = "User-Agent: Wget/1.17 (darwin15.0.0)\r\n\r\n";
     
     consumed = getLines(input2.c_str(), (int)input2.size(), lines);
     EXPECT_EQ(input2.size(), consumed);
-    EXPECT_EQ("User-Agent: Wget/1.17 (darwin15.0.0)", lines.front());
-    EXPECT_EQ("", lines.back());
+    EXPECT_STREQ("User-Agent: Wget/1.17 (darwin15.0.0)", lines.front().c_str());
+    EXPECT_STREQ("", lines.back().c_str());
+    lines.clear();
+    
+    const std::string input3 = "User-Agent: Wget/1.17 (darwin15.0.0)";
+    
+    consumed = getLines(input3.c_str(), (int)input3.size(), lines);
+    EXPECT_EQ(0, consumed);
+    EXPECT_EQ(0, lines.size());
+    lines.clear();
 }
 
 int main(int argc, char *argv[]) {

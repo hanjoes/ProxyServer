@@ -26,6 +26,8 @@ std::string getServerKey(const std::string &host, unsigned short port) {
     return host + ":" + std::to_string(port);
 }
 
+// get a line from buffer, divided by CRLF.
+// returns the number of bytes consumed.
 int getLines(const char *buf, int len, std::vector<std::string> &lines) {
     int lo = 0;
     int hi = 0;

@@ -36,7 +36,11 @@ private:
     
     std::string getRequest(const LSS &headers, const std::string &cmd);
     
-    void process(const std::string &req, int upstream, int fd);
+    void process(const std::string &req, int us, int ds);
+    
+    void getResponseAndForward(int us, int ds);
+    
+    int flushBuffer(char *buffer, ssize_t len, int fd);
 
 private:
     std::string host;

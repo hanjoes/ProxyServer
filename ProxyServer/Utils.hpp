@@ -18,8 +18,10 @@
 using LSS = std::list<std::pair<std::string, std::string>>;
 using PSS = std::pair<std::string, std::string>;
 
-void printErrorAndExit(const std::string &msg);
 void debug(const std::string &msg);
+void error(const std::string &msg);
+
+void printErrorAndExit(const std::string &msg);
 std::string getServerKey(const std::string &host, unsigned short port);
 int getLines(const char *buf, int len, std::vector<std::string> &lines);
 PSS pairByColon(const std::string &s);

@@ -20,16 +20,19 @@
 #include <arpa/inet.h>
 #include <err.h>
 
-
-void printErrorAndExit(const std::string &msg) {
-    std::cout << msg << " Reason: " << strerror(errno) << std::endl;
-    exit(-1);
-}
-
 void debug(const std::string &msg) {
 #if DEBUG
     std::cout << msg << std::endl;
 #endif
+}
+
+void error(const std::string &msg) {
+    std::cerr << msg << " Reason: " << strerror(errno) << std::endl;
+}
+
+void printErrorAndExit(const std::string &msg) {
+    error(msg);
+    exit(-1);
 }
 
 std::string getServerKey(const std::string &host, unsigned short port) {
@@ -128,3 +131,4 @@ std::string toUpper(std::string &&s) {
     }
     return s;
 }
+

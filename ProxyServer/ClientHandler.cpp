@@ -52,6 +52,7 @@ void ClientHandler::processRequest(int fd) {
 void ClientHandler::requestUpstreamAndForward(int fd) {
     std::string cmd = lines.front();
     std::vector<std::string> parts = getPartsFromCmd(cmd);
+    for (auto p: parts) debug(p);
     std::string host = getHostFromUrl(parts[1]);
     int upstream = connectToHost(host);
     if (upstream < 0) {
@@ -59,6 +60,7 @@ void ClientHandler::requestUpstreamAndForward(int fd) {
         << "connect to upstream failed.. "
         << strerror(errno)
         << std::endl;
+        return;
     }
     LSS headers = getClientHeaderList();
     std::string request = getRequest(headers, cmd);
@@ -81,6 +83,7 @@ LSS ClientHandler::getClientHeaderList() {
             continue;
         headers.push_back(p);
     }
+    lines.clear();
     return headers;
 }
 
@@ -92,7 +95,41 @@ std::string ClientHandler::getRequest(const LSS &headers,
     return req;
 }
 
-void ClientHandler::process(const std::string &req, int upstream, int fd) {
+void ClientHandler::process(const std::string &req, int us, int ds) {
     debug("request: ");
     debug(req);
+
+    memset(buffer, 0, MAX_BUFFER_LEN);
+    memcpy(buffer, req.c_str(), req.size());
+    
+    ssize_t ret = flushBuffer(buffer, req.size(), us);
+    if (ret < 0) return;
+    
+    getResponseAndForward(us, ds);
 }
+
+void ClientHandler::getResponseAndForward(int us, int ds) {
+    memset(buffer, 0, MAX_BUFFER_LEN);
+    
+    ssize_t ret;
+    while ((ret = read(us, buffer, MAX_BUFFER_LEN)) > 0) {
+        ret = flushBuffer(buffer, ret, ds);
+        if (ret < 0) break;
+    }
+}
+
+int ClientHandler::flushBuffer(char *buffer, ssize_t len, int fd) {
+    ssize_t ret;
+    ssize_t remainDataLen = len;
+    while (remainDataLen > 0) {
+        ret = write(fd, buffer, remainDataLen);
+        if (ret < 0) {
+            error("flush error.");
+            return -1;
+        }
+        remainDataLen -= ret;
+        memmove(buffer, buffer+ret, remainDataLen);
+    }
+    return 0;
+}
+

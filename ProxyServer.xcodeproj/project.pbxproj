@@ -11,6 +11,7 @@
 		DB8601781C223EFD00AADBA3 /* ClientHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB8601741C223EFD00AADBA3 /* ClientHandler.cpp */; };
 		DB86017C1C223F5300AADBA3 /* ProxyServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DB8601761C223EFD00AADBA3 /* ProxyServer.cpp */; };
 		DBA7E6FA1C27FD7000ED9184 /* gtest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBA7E6F91C27FD7000ED9184 /* gtest.framework */; };
+		DBA7E6FD1C28116200ED9184 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBD5ED721C264931008D1057 /* Utils.cpp */; };
 		DBBD23741C27FA37000B214F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBBD23731C27FA37000B214F /* main.cpp */; };
 		DBD5ED741C264931008D1057 /* Utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DBD5ED721C264931008D1057 /* Utils.cpp */; settings = {COMPILER_FLAGS = "-D DEBUG"; }; };
 /* End PBXBuildFile section */
@@ -44,6 +45,8 @@
 		DB8601761C223EFD00AADBA3 /* ProxyServer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyServer.cpp; sourceTree = "<group>"; };
 		DB8601771C223EFD00AADBA3 /* ProxyServer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ProxyServer.hpp; sourceTree = "<group>"; };
 		DBA7E6F91C27FD7000ED9184 /* gtest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = gtest.framework; path = ../../../../../../../usr/local/gtest/gtest.framework; sourceTree = "<group>"; };
+		DBA7E6FE1C284BF900ED9184 /* libgmock_main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmock_main.a; path = ../../../../../../../usr/local/gmock/libgmock_main.a; sourceTree = "<group>"; };
+		DBA7E6FF1C284BF900ED9184 /* libgmock.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libgmock.a; path = ../../../../../../../usr/local/gmock/libgmock.a; sourceTree = "<group>"; };
 		DBBD23711C27FA37000B214F /* Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Tests; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBBD23731C27FA37000B214F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		DBD5ED721C264931008D1057 /* Utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Utils.cpp; sourceTree = "<group>"; };
@@ -72,6 +75,8 @@
 		DB8601611C223DB900AADBA3 = {
 			isa = PBXGroup;
 			children = (
+				DBA7E6FE1C284BF900ED9184 /* libgmock_main.a */,
+				DBA7E6FF1C284BF900ED9184 /* libgmock.a */,
 				DBA7E6F91C27FD7000ED9184 /* gtest.framework */,
 				DB86016C1C223DB900AADBA3 /* ProxyServer */,
 				DBBD23721C27FA37000B214F /* Tests */,
@@ -198,6 +203,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DBA7E6FD1C28116200ED9184 /* Utils.cpp in Sources */,
 				DBBD23741C27FA37000B214F /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -306,6 +312,10 @@
 					/usr/local/gtest,
 				);
 				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/gtest/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/gmock,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -316,6 +326,10 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/gtest,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/gmock,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

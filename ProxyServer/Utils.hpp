@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <map>
 
 using MSS = std::map<std::string, std::string>;
@@ -19,7 +20,7 @@ using PSS = std::pair<std::string, std::string>;
 void printErrorAndExit(const std::string &msg);
 void debug(const std::string &msg);
 std::string getServerKey(const std::string &host, unsigned short port);
-int parseHttpRequest(const char *buffer, MSS &headerMap);
+int getLines(const char *buf, int len, std::vector<std::string> &lines);
 PSS splitByColon(const std::string &s);
 std::string trim(const std::string &s);
 

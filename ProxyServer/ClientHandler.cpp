@@ -29,6 +29,9 @@ std::string ClientHandler::dump() {
 }
 
 void ClientHandler::processRequest(int fd) {
+    memset(buffer, 0, MAX_BUFFER_LEN);
+    dataLen = 0;
+    
     char *bufferStart = ((char *)buffer) + dataLen;
     ssize_t ret = read(fd, bufferStart, MAX_BUFFER_LEN - dataLen);
     if (ret < 0) printErrorAndExit("read failed.");
@@ -52,7 +55,7 @@ void ClientHandler::processRequest(int fd) {
 void ClientHandler::requestUpstreamAndForward(int fd) {
     std::string cmd = lines.front();
     std::vector<std::string> parts = getPartsFromCmd(cmd);
-    for (auto p: parts) debug(p);
+    debug("CMD::" + cmd);
     std::string host = getHostFromUrl(parts[1]);
     int upstream = connectToHost(host);
     if (upstream < 0) {
@@ -133,3 +136,21 @@ int ClientHandler::flushBuffer(char *buffer, ssize_t len, int fd) {
     return 0;
 }
 
+
+// get a line from buffer, divided by CRLF.
+// returns the number of bytes consumed.
+int ClientHandler::getLines(const char *buf,
+                            int len,
+                            std::vector<std::string> &lines) {
+    int lo = 0;
+    int hi = 0;
+    while (hi < len) {
+        if (hi > 1 && buf[hi] == '\n' && buf[hi-1] == '\r') {
+            lines.push_back(std::string(buf+lo, hi-lo-1));
+            lo = hi+1;
+        }
+        ++hi;
+        if (lines.size() > 0 && lines.back().size() == 0) break;
+    }
+    return lo;
+}

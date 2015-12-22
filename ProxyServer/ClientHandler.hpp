@@ -32,6 +32,8 @@ public:
     bool canDispatch();
     
 private:
+    int getLines(const char *buf, int len, std::vector<std::string> &lines);
+    
     LSS getClientHeaderList();
     
     std::string getRequest(const LSS &headers, const std::string &cmd);

@@ -56,6 +56,29 @@ TEST(Utils, GetLines) {
     lines.clear();
 }
 
+TEST(Utils, GetPartsFromCmd) {
+    const std::string input1 =
+    "GET "
+    "http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html "
+    "HTTP/1.1";
+    
+    std::vector<std::string> parts = getPartsFromCmd(input1);
+    EXPECT_STREQ("GET", parts[0].c_str());
+    EXPECT_STREQ("http://docs.oracle.com/javase/7/docs/api/java/net/"
+                 "Socket.html", parts[1].c_str());
+    EXPECT_STREQ("HTTP/1.1", parts[2].c_str());
+}
+
+TEST(Utils, GetHostFromUrl) {
+    const std::string input1 =
+    "http://docs.oracle.com/javase/7/docs/api/java/net"
+    "/Socket.html";
+    
+    std::string host = getHostFromUrl(input1);
+    EXPECT_STREQ("docs.oracle.com", host.c_str());
+}
+
+
 int main(int argc, char *argv[]) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

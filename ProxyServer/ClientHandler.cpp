@@ -9,6 +9,8 @@
 #include "ClientHandler.hpp"
 #include "Utils.hpp"
 
+#include <sstream>
+
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <unistd.h>
@@ -48,7 +50,16 @@ void ClientHandler::processRequest(int fd) {
 /// launch a thread to communicate with upstream and
 /// forward response to the client using fd.
 void ClientHandler::requestUpstreamAndForward(int fd) {
+    std::string cmd = lines.front();
+    std::vector<std::string> parts = getPartsFromCmd(cmd);
+    std::string host = getHostFromUrl(parts[1]);
     
+    LSS headers;
+    for (int i = 1; i < lines.size()-1; ++i) {
+        PSS p = splitByColon(lines[i]);
+        debug(p.first + " -> " + p.second);
+        headers.push_back(p);
+    }
 }
 
 bool ClientHandler::canDispatch() {

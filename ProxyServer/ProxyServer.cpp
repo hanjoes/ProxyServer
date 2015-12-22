@@ -55,11 +55,24 @@ void ProxyServer::start() {
             else if (pCurrentEvent->filter == EVFILT_READ) {
                 auto iter = clientsMap.find(eventIdent);
                 if (iter != clientsMap.end()) {
-                    auto &client = iter->second;
-                    client->processRequest(eventIdent, pCurrentEvent->data);
+                    iter->second->processRequest(eventIdent);
                 }
             }
             else if (pCurrentEvent->filter == EVFILT_WRITE) {
+                /// a client socket can only be written after all data
+                /// has been read.
+                
+                /// iterate through all client handler and find dispatchable
+                /// clients and launch threads
+                auto iter = clientsMap.begin();
+                for (; iter != clientsMap.end(); ++iter) {
+                    if (iter->second->canDispatch()) {
+                        debug("client "
+                              + std::to_string(iter->first) +
+                              " can be dispatched.");
+                        iter->second->requestUpstreamAndForward(eventIdent);
+                    }
+                }
             }
         }
     }

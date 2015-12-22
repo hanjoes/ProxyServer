@@ -14,7 +14,7 @@
 #include <vector>
 #include <map>
 
-using MSS = std::map<std::string, std::string>;
+using VSS = std::vector<std::pair<std::string, std::string>>;
 using PSS = std::pair<std::string, std::string>;
 
 void printErrorAndExit(const std::string &msg);

@@ -25,16 +25,17 @@ public:
     
     std::string dump();
     
-    void processRequest(int fd, size_t dataLen);
-
-private:
-    MSS generateHeaderMap(int fd);
+    void processRequest(int fd);
+    
+    void requestUpstreamAndForward(int fd);
+    
+    bool canDispatch();
 
 private:
     std::string host;
     unsigned short port;
     
-    MSS headerMap;
+    std::vector<std::string> lines;
 
     int dataLen;
     char buffer[MAX_BUFFER_LEN];

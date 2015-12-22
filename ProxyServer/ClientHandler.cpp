@@ -53,6 +53,8 @@ void ClientHandler::requestUpstreamAndForward(int fd) {
     std::string cmd = lines.front();
     std::vector<std::string> parts = getPartsFromCmd(cmd);
     std::string host = getHostFromUrl(parts[1]);
+    std::string ip = getIpFromHost(host);
+    debug("host: " + host + " ip: " + ip);
     
     LSS headers;
     for (int i = 1; i < lines.size()-1; ++i) {

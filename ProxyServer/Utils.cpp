@@ -88,7 +88,7 @@ std::string getIpFromHost(const std::string &host) {
             continue;
         }
         struct sockaddr_in *sockAddr = (struct sockaddr_in *)res->ai_addr;
-        std::string ip = inet_ntoa(sockAddr->sin_addr);
+        ret = inet_ntoa(sockAddr->sin_addr);
         /// got one
         break;
     }

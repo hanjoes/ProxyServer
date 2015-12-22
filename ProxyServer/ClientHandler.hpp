@@ -32,7 +32,11 @@ public:
     bool canDispatch();
     
 private:
-    LSS generateHeaders();
+    LSS getClientHeaderList();
+    
+    std::string getRequest(const LSS &headers, const std::string &cmd);
+    
+    void process(const std::string &req, int upstream, int fd);
 
 private:
     std::string host;

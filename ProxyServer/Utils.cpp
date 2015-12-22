@@ -51,7 +51,7 @@ int getLines(const char *buf, int len, std::vector<std::string> &lines) {
     return lo;
 }
 
-PSS getHeaderPair(const std::string &s) {
+PSS pairByColon(const std::string &s) {
     size_t colon = s.find(':');
     PSS p;
     if (colon != std::string::npos) {
@@ -69,7 +69,7 @@ std::string trim(const std::string &s) {
     return s.substr(lo, hi-lo+1);
 }
 
-std::string getIpFromHost(const std::string &host) {
+int connectToHost(const std::string &host) {
     struct addrinfo hints, *res, *res0;
     const char *cause = NULL;
     std::string ret = "";
@@ -81,23 +81,27 @@ std::string getIpFromHost(const std::string &host) {
     int s = getaddrinfo(host.c_str(), NULL, &hints, &res0);
     if (s) printErrorAndExit(gai_strerror(s));
     
+    s = -1;
     for (res = res0; res; res = res->ai_next) {
         s = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
         if (s < 0) {
             cause = "socket";
             continue;
         }
-        struct sockaddr_in *sockAddr = (struct sockaddr_in *)res->ai_addr;
-        ret = inet_ntoa(sockAddr->sin_addr);
+        struct sockaddr_in *addr = (struct sockaddr_in *)res->ai_addr;
+        addr->sin_port = htons(80);
+
+        if (connect(s, res->ai_addr, res->ai_addrlen) < 0) {
+            cause = "connect";
+            close(s);
+            s = -1;
+            continue;
+        }
         /// got one
         break;
     }
-    
-    if (s < 0) {
-        err(1, "%s", cause);
-    }
     freeaddrinfo(res0);
-    return ret;
+    return s;
 }
 
 std::vector<std::string> getPartsFromCmd(const std::string &cmd) {

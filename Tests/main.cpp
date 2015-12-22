@@ -69,7 +69,7 @@ TEST(Utils, GetPartsFromCmd) {
     EXPECT_STREQ("HTTP/1.1", parts[2].c_str());
 }
 
-TEST(Utils, GetHostFromUrl) {
+TEST(Utils, getHostFromUrl) {
     const std::string input1 =
     "http://docs.oracle.com/javase/7/docs/api/java/net"
     "/Socket.html";

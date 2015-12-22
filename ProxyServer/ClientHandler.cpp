@@ -53,24 +53,46 @@ void ClientHandler::requestUpstreamAndForward(int fd) {
     std::string cmd = lines.front();
     std::vector<std::string> parts = getPartsFromCmd(cmd);
     std::string host = getHostFromUrl(parts[1]);
-    std::string ip = getIpFromHost(host);
-    debug("host: " + host + " ip: " + ip);
+    int upstream = connectToHost(host);
+    if (upstream < 0) {
+        std::cerr
+        << "connect to upstream failed.. "
+        << strerror(errno)
+        << std::endl;
+    }
+    LSS headers = getClientHeaderList();
+    std::string request = getRequest(headers, cmd);
     
-    LSS headers = generateHeaders();
+    process(request, upstream, fd);
 }
 
 bool ClientHandler::canDispatch() {
     return lines.back().size() == 0;
 }
 
-LSS ClientHandler::generateHeaders() {
+LSS ClientHandler::getClientHeaderList() {
     /// split lines into pairs, and strip "User-Agent" and
     /// "referer" browser headers.
     LSS headers;
     for (int i = 1; i < lines.size()-1; ++i) {
-        PSS p = getHeaderPair(lines[i]);
-        debug(p.first + " -> " + p.second);
+        PSS p = pairByColon(lines[i]);
+        const std::string &name = p.first;
+        if (!name.compare("REFERER") || !name.compare("USER-AGENT"))
+            continue;
         headers.push_back(p);
     }
     return headers;
+}
+
+std::string ClientHandler::getRequest(const LSS &headers,
+                                      const std::string &cmd) {
+    std::string req = cmd + "\r\n";
+    for (auto p : headers) req += p.first + ": " + p.second + "\r\n";
+    req += "\r\n"; /// an extra CRLF for termination
+    return req;
+}
+
+void ClientHandler::process(const std::string &req, int upstream, int fd) {
+    debug("request: ");
+    debug(req);
 }

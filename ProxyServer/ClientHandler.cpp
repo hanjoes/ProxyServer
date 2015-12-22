@@ -68,7 +68,7 @@ LSS ClientHandler::generateHeaders() {
     /// "referer" browser headers.
     LSS headers;
     for (int i = 1; i < lines.size()-1; ++i) {
-        PSS p = splitByColon(lines[i]);
+        PSS p = getHeaderPair(lines[i]);
         debug(p.first + " -> " + p.second);
         headers.push_back(p);
     }

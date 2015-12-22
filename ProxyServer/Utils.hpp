@@ -22,11 +22,11 @@ void printErrorAndExit(const std::string &msg);
 void debug(const std::string &msg);
 std::string getServerKey(const std::string &host, unsigned short port);
 int getLines(const char *buf, int len, std::vector<std::string> &lines);
-PSS splitByColon(const std::string &s);
+PSS getHeaderPair(const std::string &s);
 std::string trim(const std::string &s);
 std::string getIpFromHost(const std::string &host);
 std::vector<std::string> getPartsFromCmd(const std::string &cmd);
 std::string getHostFromUrl(const std::string &url);
-void toUpper(std::string &s);
+std::string toUpper(std::string &&s);
 
 #endif /* Utils_hpp */

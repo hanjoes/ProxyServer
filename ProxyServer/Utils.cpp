@@ -51,11 +51,11 @@ int getLines(const char *buf, int len, std::vector<std::string> &lines) {
     return lo;
 }
 
-PSS splitByColon(const std::string &s) {
+PSS getHeaderPair(const std::string &s) {
     size_t colon = s.find(':');
     PSS p;
     if (colon != std::string::npos) {
-        std::string l = trim(s.substr(0, colon));
+        std::string l = toUpper(trim(s.substr(0, colon)));
         std::string r = trim(s.substr(colon+1, s.size()));
         p = std::make_pair(l, r);
     }
@@ -118,8 +118,9 @@ std::string getHostFromUrl(const std::string &url) {
     return url.substr(lo, hi-lo);
 }
 
-void toUpper(std::string &s) {
+std::string toUpper(std::string &&s) {
     for (auto i = 0; i < s.size(); ++i) {
         s[i] = toupper(s[i]);
     }
+    return s;
 }

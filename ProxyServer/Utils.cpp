@@ -117,3 +117,9 @@ std::string getHostFromUrl(const std::string &url) {
     if (hi == std::string::npos) hi = url.size();
     return url.substr(lo, hi-lo);
 }
+
+void toUpper(std::string &s) {
+    for (auto i = 0; i < s.size(); ++i) {
+        s[i] = toupper(s[i]);
+    }
+}

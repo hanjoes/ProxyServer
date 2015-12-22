@@ -56,14 +56,21 @@ void ClientHandler::requestUpstreamAndForward(int fd) {
     std::string ip = getIpFromHost(host);
     debug("host: " + host + " ip: " + ip);
     
+    LSS headers = generateHeaders();
+}
+
+bool ClientHandler::canDispatch() {
+    return lines.back().size() == 0;
+}
+
+LSS ClientHandler::generateHeaders() {
+    /// split lines into pairs, and strip "User-Agent" and
+    /// "referer" browser headers.
     LSS headers;
     for (int i = 1; i < lines.size()-1; ++i) {
         PSS p = splitByColon(lines[i]);
         debug(p.first + " -> " + p.second);
         headers.push_back(p);
     }
-}
-
-bool ClientHandler::canDispatch() {
-    return lines.back().size() == 0;
+    return headers;
 }

@@ -27,5 +27,6 @@ std::string trim(const std::string &s);
 std::string getIpFromHost(const std::string &host);
 std::vector<std::string> getPartsFromCmd(const std::string &cmd);
 std::string getHostFromUrl(const std::string &url);
+void toUpper(std::string &s);
 
 #endif /* Utils_hpp */

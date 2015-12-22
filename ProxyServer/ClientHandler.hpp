@@ -30,6 +30,9 @@ public:
     void requestUpstreamAndForward(int fd);
     
     bool canDispatch();
+    
+private:
+    LSS generateHeaders();
 
 private:
     std::string host;

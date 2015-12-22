@@ -78,6 +78,12 @@ TEST(Utils, GetHostFromUrl) {
     EXPECT_STREQ("docs.oracle.com", host.c_str());
 }
 
+TEST(Utils, ToUpper) {
+    std::string input1 = "Hello-World!";
+    toUpper(input1);
+    EXPECT_STREQ("HELLO-WORLD!", input1.c_str());
+}
+
 
 int main(int argc, char *argv[]) {
     ::testing::InitGoogleTest(&argc, argv);

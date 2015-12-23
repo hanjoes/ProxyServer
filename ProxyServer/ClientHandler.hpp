@@ -65,4 +65,9 @@ private:
     char buffer[MAX_BUFFER_LEN];
 };
 
+struct ClientHandlerArgs {
+    ClientHandler *clientHandler;
+    int fd;
+};
+
 #endif /* ClientHandler_hpp */

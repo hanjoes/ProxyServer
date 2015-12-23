@@ -126,7 +126,6 @@ void ProxyServer::registerEventsForNewClient(int kfd, int cfd) {
 }
 
 void ProxyServer::clearClientData(int kfd, int cfd) {
-    debug(">> clearing client: " + clientsMap[cfd]->dump());
     clientsMap.erase(cfd);
     /// close will trigger EV_DELETE on the events
     /// related to the fd.
@@ -136,8 +135,9 @@ void ProxyServer::clearClientData(int kfd, int cfd) {
 void ProxyServer::dispatch(ClientHandler *client, int fd) {
     if (client != nullptr) client->setDispatched(true);
     
-    args[0] = client;
-    args[1] = &fd;
+    auto args = new ClientHandlerArgs();
+    args->fd = fd;
+    args->clientHandler = client;
     
     if (!multiThreaded) {
         debug("single thread.");

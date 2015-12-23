@@ -87,10 +87,10 @@ void ClientHandler::setDispatched(bool status) {
 }
 
 void *ClientHandler::run(void *args) {
-    void **argPtrs = (void **)args;
-    ClientHandler *client = (ClientHandler *)argPtrs[0];
-    int fd = *((int *)argPtrs[1]);
-    client->requestUpstreamAndForward(fd);
+    ClientHandlerArgs *runArgs = (ClientHandlerArgs *)args;
+    ClientHandler *client = runArgs->clientHandler;
+    client->requestUpstreamAndForward(runArgs->fd);
+    delete runArgs;
     return NULL;
 }
 
@@ -122,6 +122,7 @@ std::string ClientHandler::writeHeader(const LSS &headers,
 void ClientHandler::process(const std::string &req, int us, int ds) {
     debug("request: ");
     debug(req);
+    debug("request ended.");
     
     ssize_t ret = flushBuffer(req.c_str(), req.size(), us);
     if (ret < 0) return;
@@ -162,6 +163,8 @@ void ClientHandler::forwardResponseHeader(int fd) {
     std::string header = writeHeader(headers, cmd);
     debug("response: ");
     debug(header);
+    debug("response ended.");
+
     flushBuffer(header.c_str(), header.size(), fd);
 }
 
@@ -177,6 +180,7 @@ void ClientHandler::leftShiftData(size_t lo, size_t len) {
 }
 
 int ClientHandler::flushBuffer(const char *buffer, ssize_t len, int fd) {
+    debug(">>> flushing to fd: " + std::to_string(fd) + " <<<");
     ssize_t ret;
     ssize_t consumedLen = 0;
     while (consumedLen < len) {

@@ -18,7 +18,7 @@ int main(int argc, const char * argv[]) {
     }
     std::string host = argv[1];
     int port = atoi(argv[2]);
-    auto server = std::unique_ptr<ProxyServer>(new ProxyServer(host, port, false));
+    auto server = std::unique_ptr<ProxyServer>(new ProxyServer(host, port));
     server->start();
     return 0;
 }

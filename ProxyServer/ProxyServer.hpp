@@ -52,7 +52,6 @@ protected:
     int port;
     bool multiThreaded;
     pthread_attr_t threadAttr;
-    void *args[2];
 };
 
 #endif /* ProxyServer_hpp */

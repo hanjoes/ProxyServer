@@ -11,19 +11,19 @@
 #include "gtest/gtest.h"
 #include "Utils.hpp"
 
-TEST(Utils, SplitByColon) {
+TEST(Utils, PairByColon) {
     const char *input1 = "User-Agent: Wget/1.17 (darwin15.0.0)";
-    PSS pss = splitByColon(input1);
-    EXPECT_STREQ("User-Agent", pss.first.c_str());
+    PSS pss = pairByColon(input1);
+    EXPECT_STREQ("USER-AGENT", pss.first.c_str());
     EXPECT_STREQ("Wget/1.17 (darwin15.0.0)", pss.second.c_str());
     
     const char *input2 = "  a : b  ";
-    pss = splitByColon(input2);
-    EXPECT_STREQ("a", pss.first.c_str());
+    pss = pairByColon(input2);
+    EXPECT_STREQ("A", pss.first.c_str());
     EXPECT_STREQ("b", pss.second.c_str());
     
     const char *input3 = "   :   ";
-    pss = splitByColon(input3);
+    pss = pairByColon(input3);
     EXPECT_STREQ("", pss.first.c_str());
     EXPECT_STREQ("", pss.second.c_str());
 }
@@ -34,7 +34,7 @@ TEST(Utils, GetLines) {
     const std::string input1 = line1 + line2;
     std::vector<std::string> lines;
     
-    int consumed = getLines(input1.c_str(), (int)input1.size(), lines);
+    size_t consumed = getLines(input1.c_str(), input1.size(), lines);
     EXPECT_EQ(line1.size(), consumed);
     EXPECT_STREQ("User-Agent: Wget/1.17 (darwin15.0.0)", lines.front().c_str());
     EXPECT_STREQ("User-Agent: Wget/1.17 (darwin15.0.0)", lines.back().c_str());
@@ -80,7 +80,7 @@ TEST(Utils, getHostFromUrl) {
 
 TEST(Utils, ToUpper) {
     std::string input1 = "Hello-World!";
-    toUpper(input1);
+    input1 = toUpper(std::move(input1));
     EXPECT_STREQ("HELLO-WORLD!", input1.c_str());
 }
 

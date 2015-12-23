@@ -117,3 +117,21 @@ std::string toUpper(std::string &&s) {
     return s;
 }
 
+
+// get a line from buffer, divided by CRLF.
+// returns the number of bytes consumed.
+size_t getLines(const char *buf,
+                size_t len,
+                std::vector<std::string> &lines) {
+    int lo = 0;
+    int hi = 0;
+    while (hi < len) {
+        if (hi > 1 && buf[hi] == '\n' && buf[hi-1] == '\r') {
+            lines.push_back(std::string(buf+lo, hi-lo-1));
+            lo = hi+1;
+        }
+        ++hi;
+        if (lines.size() > 0 && lines.back().size() == 0) break;
+    }
+    return lo;
+}

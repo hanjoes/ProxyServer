@@ -23,7 +23,7 @@ void error(const std::string &msg);
 
 void printErrorAndExit(const std::string &msg);
 std::string getServerKey(const std::string &host, unsigned short port);
-int getLines(const char *buf, int len, std::vector<std::string> &lines);
+size_t getLines(const char *buf, size_t len, std::vector<std::string> &lines);
 PSS pairByColon(const std::string &s);
 std::string trim(const std::string &s);
 int connectToHost(const std::string &host);

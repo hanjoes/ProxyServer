@@ -31,26 +31,37 @@ public:
     
     bool canDispatch();
     
+    void setDispatched(bool status);
+    
+    static void *run(void *args);
+    
 private:
-    int getLines(const char *buf, int len, std::vector<std::string> &lines);
+    void forwardResponseHeader(int fd);
     
-    LSS getClientHeaderList();
+    int fillReadBuffer(int fd);
     
-    std::string getRequest(const LSS &headers, const std::string &cmd);
+    void resetBuffer();
+    
+    void leftShiftData(size_t lo, size_t len);
+    
+    LSS getHeaderList();
+    
+    std::string writeHeader(const LSS &headers, const std::string &cmd);
     
     void process(const std::string &req, int us, int ds);
     
     void getResponseAndForward(int us, int ds);
     
-    int flushBuffer(char *buffer, ssize_t len, int fd);
+    int flushBuffer(const char *buffer, ssize_t len, int fd);
 
 private:
     std::string host;
     unsigned short port;
+    bool dispatched;
     
     std::vector<std::string> lines;
 
-    int dataLen;
+    size_t dataLen;
     char buffer[MAX_BUFFER_LEN];
 };
 

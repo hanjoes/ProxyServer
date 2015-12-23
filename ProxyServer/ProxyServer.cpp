@@ -16,13 +16,16 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-ProxyServer::ProxyServer(const std::string &host, int port)
-: host(host), port(port)
+ProxyServer::ProxyServer(const std::string &host, int port, bool mul)
+: host(host), port(port), multiThreaded(mul)
 {
     eventList = new KEVENT[MAX_EVENT_NUM];
+    pthread_attr_init(&threadAttr);
+    pthread_attr_setdetachstate(&threadAttr, PTHREAD_CREATE_DETACHED);
 }
 
 ProxyServer::~ProxyServer() {
+    pthread_attr_destroy(&threadAttr);
     delete[] eventList;
 }
 
@@ -67,10 +70,7 @@ void ProxyServer::start() {
                 auto iter = clientsMap.begin();
                 for (; iter != clientsMap.end(); ++iter) {
                     if (iter->second->canDispatch()) {
-                        debug("client "
-                              + std::to_string(iter->first) +
-                              " can be dispatched.");
-                        iter->second->requestUpstreamAndForward(eventIdent);
+                        dispatch(iter->second.get(), eventIdent);
                     }
                 }
             }
@@ -131,4 +131,19 @@ void ProxyServer::clearClientData(int kfd, int cfd) {
     /// close will trigger EV_DELETE on the events
     /// related to the fd.
     if (cfd >= 0) close(cfd);
+}
+
+void ProxyServer::dispatch(ClientHandler *client, int fd) {
+    if (client != nullptr) client->setDispatched(true);
+    
+    args[0] = client;
+    args[1] = &fd;
+    
+    if (!multiThreaded) {
+        debug("single thread.");
+        ClientHandler::run(args);
+        return;
+    }
+    pthread_t pid;
+    pthread_create(&pid, &threadAttr, ClientHandler::run, args);
 }

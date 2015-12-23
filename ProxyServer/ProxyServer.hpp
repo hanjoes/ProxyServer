@@ -17,6 +17,7 @@
 #include <sys/types.h>
 #include <sys/event.h>
 #include <sys/time.h>
+#include <pthread.h> 
 
 #include "ClientHandler.hpp"
 
@@ -27,7 +28,7 @@ const static int MAX_EVENT_NUM = 128;
 
 class ProxyServer {
 public:
-    ProxyServer(const std::string &host, int port);
+    ProxyServer(const std::string &host, int port, bool mul = true);
     
     ~ProxyServer();
     
@@ -35,15 +36,23 @@ public:
     
 protected:
     void initListenEvent(KEVENT *ev);
+    
     int acceptClient(int listenFd);
+    
     void registerEventsForNewClient(int kfd, int cfd);
+    
     void clearClientData(int kfd, int cfd);
+    
+    void dispatch(ClientHandler *client, int fd);
     
 protected:
     KEVENT *eventList;
     std::unordered_map<int, UPTRCH> clientsMap;
     const std::string &host;
     int port;
+    bool multiThreaded;
+    pthread_attr_t threadAttr;
+    void *args[2];
 };
 
 #endif /* ProxyServer_hpp */

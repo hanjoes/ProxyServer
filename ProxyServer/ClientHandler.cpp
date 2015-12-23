@@ -180,7 +180,6 @@ void ClientHandler::leftShiftData(size_t lo, size_t len) {
 }
 
 int ClientHandler::flushBuffer(const char *buffer, ssize_t len, int fd) {
-    debug(">>> flushing to fd: " + std::to_string(fd) + " <<<");
     ssize_t ret;
     ssize_t consumedLen = 0;
     while (consumedLen < len) {

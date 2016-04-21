@@ -12,6 +12,7 @@
 #include "ProxyServer.hpp"
 #include "Utils.hpp"
 
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -48,7 +49,7 @@ void ProxyServer::start() {
             KEVENT *pCurrentEvent = &eventList[eventIndex];
             int eventIdent = (int)pCurrentEvent->ident;
             
-            if (pCurrentEvent->ident == listenEvent.ident) {
+            if (eventIdent == listenEvent.ident) {
                 int cfd = acceptClient((int)listenEvent.ident);
                 registerEventsForNewClient(kfd, cfd);
             }

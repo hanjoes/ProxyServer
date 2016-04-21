@@ -11,6 +11,7 @@
 #include <sstream>
 #include <iterator>
 
+#include <unistd.h>
 #include <assert.h>
 
 #include <netdb.h>
